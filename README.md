@@ -13,5 +13,6 @@
         * `pip install pandas`
 
 ### Linux (Ubuntu)
+
     * установите python: `sudo apt install python3`
     * установите дополнительные модули: `sudo apt install python3-pandas`
