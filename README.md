@@ -1,6 +1,6 @@
 # Программа-тренажер для помощи в запоминании таблицы умножения
 
-Основная ссылка: [https://hithub.com/Gatche-clyb/el](https://hithub.com/Gatche-clyb/el)
+Основная ссылка: [https://github.com/Gatche-clyb/el](https://github.com/Gatche-clyb/el)
 
 ## Установка
 
@@ -8,10 +8,10 @@
 
 * Установить Python:
     * [скачать установщик с официального сайта](https://www.python.org/downloads/windows/ "желательно выбрать последнюю стабильную версию")
-    * При установке Python установите флажок «Добавить Python 3.8 в PATH%», чтобы иметь возможность запускать скрипты Python из командной строки.
+    * При установке Python установите флажок `Добавить Python 3.8 в %PATH%`, чтобы иметь возможность запускать скрипты Python из командной строки.
     * Установите дополнительные модули, нужные для работы (из коммандной строки):
         * `pip install pandas`
 
 ### Linux (Ubuntu)
     * установите python: `sudo apt install python3`
-    * установите дополнительные модули: `sudo apt install python3-pandas'
+    * установите дополнительные модули: `sudo apt install python3-pandas`
