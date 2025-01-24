@@ -1,12 +1,20 @@
+#!el/bin/python3
 # Строчка ниже означает, что мы импортируем библиотеку для генирации случайных чисел
-from father import *
+#from father import *
 import random
 from colorama import Fore, Back, init  # ,библиотека для цветного вывода
 import pandas as pd # мы импортируем библиотеку для оброботки данных
 import os # модуль для проверки существования файлов
-import matplotlib.pyplot as plt
-import seaborn as sns
+import matplotlib.pyplot as plt  # базовый модуль отрисовки графики
+import seaborn as sns  # модуль графического представления данных
 
+time_limit = 5  # количество секунд на ответ
+number_of_tasks = 15  # количество примеров
+mul_limit = [1, 4]  # пределы множителей
+div_limit = [1, 4]  # пределы делимого и частного в этом диапазоне
+error_penalty = 150  # штраф за ошибку
+timeout_penalty = 90  # штраф за таймаут
+not_using_penalty = 90  # если пример до этого не встречался, то такое количество секунд
 
 pd.options.display.max_columns = None  # выводить все столбцы таблицы
 init() # включаем возможность цветного вывода на экран
@@ -25,9 +33,9 @@ if not os.path.exists(CSV_FILE):# если нет файла с ответами
 else:# в противном случае файл существует перейди на другой блок
     inputs_df_src = pd.read_csv(CSV_FILE)
     print('загружен файл с ответами')#печатать загружен файл с ответами
-inputs_df_src.date_time = pd.to_datetime(inputs_df_src.date_time)#?
+inputs_df_src.date_time = pd.to_datetime(inputs_df_src.date_time) # текстовое представление времени переводим формат "время"
 
-inputs_df = inputs_df_src.copy()#?
+inputs_df = inputs_df_src.copy() # сравнивая копию с оригиналом потом будем находить изменения
 
 def save_inputi():# создаём функцию с названием save_inputi
     global inputs_df, inputs_df_src#?
@@ -41,9 +49,9 @@ def mini_kubik(*, user_id=DEFAULT_USER_ID, # создаём функцию с н
         operation=  'mul_1_m', # микро операции (* : + -)
         var_1_limit=[1,1], #диопозон 1 переменной (в данном случае от 1 до 1)
         var_2_limit=[1,1], #диопозон 2 переменной (в данном случае от 1 до 1)
-        shtraf_za_ne_ispolzovanie =90,#задаём штафы в секундах 
-        shtraf_za_timeout= 90, 
-        shtraf_za_oshibki=150
+        shtraf_za_ne_ispolzovanie =not_using_penalty,#задаём штафы в секундах 
+        shtraf_za_timeout= timeout_penalty, 
+        shtraf_za_oshibki=error_penalty
         ):
     global inputs_df#делаем inputs_df глобальными
     vibrannie_vvodi = inputs_df[#?
@@ -57,28 +65,30 @@ def mini_kubik(*, user_id=DEFAULT_USER_ID, # создаём функцию с н
        & (inputs_df.date_time <= time_proverka_limit[1])   # inputs_df.date_time сравнивается с time_proverka_limit[1]
        & (inputs_df.suboperation == operation)#?
        ].copy()#?
-    #print('vibrannie_vvodi')
-    #print(vibrannie_vvodi)
+    #print(f"\tМиникубик:\t{operation=}\tvibrannie_vvodi=\n{vibrannie_vvodi}")
     df_gb = pd.DataFrame(columns =['var_1','var_2','suboperations','time_mean'])# создаём структуру игральной кости
     for i in range (var_1_limit[0],var_1_limit[1] + 1):#делаем цикл
-        for j in range (var_2_limit[0],var_2_limit[1]  + 1):#делаем цикл
+        for j in range (var_2_limit[0],var_2_limit[1] + 1):#делаем цикл
            srednee_time = shtraf_za_ne_ispolzovanie#?
-           if len (vibrannie_vvodi) > 0:#если len > 0 
-                #print('fhgf')
-                srednee_time=inputs_df.ansver_time.mean()#?
+           vibrannie_vvodi_point = vibrannie_vvodi[(vibrannie_vvodi.var1 == i) & (vibrannie_vvodi.var2 == j)].copy()
+           if len (vibrannie_vvodi_point) > 0:#если len > 0 
+                vibrannie_vvodi_point.ansver_time = vibrannie_vvodi_point.apply(lambda row: row.ansver_time if row.status == 'ok'
+                    else (timeout_penalty if row.status == 'timeout' else error_penalty), axis=1)
+                srednee_time=vibrannie_vvodi_point.ansver_time.mean()#?
            df_gb.loc[len (df_gb)] = [i, j, operation, srednee_time]#?
-    return df_gb#возвращаемся к df_gb
+    #print(f"\tМиникубик:\t{operation=}\tвозврат:\n{df_gb}")
+    return df_gb  # возвращаемся к df_gb
 
 def kubik(*, user_id=DEFAULT_USER_ID):#делаем функцию с названием kubik
     # созддим мини кубик для умножения
-    mul = mini_kubik(user_id = user_id, operation = 'mul_1_m',var_1_limit = [1,2],var_2_limit = [1,2])
+    mul = mini_kubik(user_id = user_id, operation = 'mul_1_m', var_1_limit = mul_limit, var_2_limit = mul_limit)
     # созддим мини кубик для деления
-    div = mini_kubik(user_id = user_id, operation = 'mul_1_d',var_1_limit = [1,2],var_2_limit = [1,2])
+    div = mini_kubik(user_id = user_id, operation = 'mul_1_d',var_1_limit = div_limit, var_2_limit = div_limit)
      # созддим мини кубик в котором есть и умножение и деление
     rezult = df_weeks_concat = pd.concat([mul,div]).reset_index()
     # дабовляем таблицу вероятности
     rezult ["cumsum"] = rezult ["time_mean"].cumsum()
-    return rezult#вернуться к результату
+    return rezult #вернуться к результату
     
 def input_keyboard(max_time=15):#создаём функцию
     res_input=namedtuple('res_input', ['input', 'time_exceeded', 'time_sec'])#делаем структуру с тремя переменными
@@ -175,21 +185,34 @@ def generaceya_primerov(kolichestvo_primerov, *, user_id=DEFAULT_USER_ID, ansver
     print(f"Правильных {da} Неправильных {net} Тай-маутав {Timaut}")#печатать скоко правильных а скоко неправильных
 
 
-input_with_timeout.step_msc = 100
-#inp = input_with_timeout(None, print_timeout=True, default = 'e').get().input
-#конец ввода с ограничением времени 
+def preparate_to_heatmap(*, df, var1, var2, value, agg='mean'):
+    #print(f"\tpreparate_to_heatmap\t{var1=}\t{var2=}\t{value=}\tdf=\n{df}")
+    var1u = df[var1].unique().copy()
+    var2u = df[var2].unique().copy()
+    var1u.sort()
+    var2u.sort()
+    final_df = pd.DataFrame(columns=var2u)
+    for v1 in var1u:
+        series = pd.Series()
+        for v2 in var2u:
+            series[v2] = df[(df[var1] == v1) & (df[var2] == v2)][value].agg(agg)
+        final_df.loc[v1]=series
+    #print(f"\tpreparate_to_heatmap\tfinal_df=\n{final_df}")
+    return final_df
 
 def vozvrat_v_tablicu():
     #N_posledniy_sesii = inputs_df.session.max()
     #posledniya_sesiya = inputs_df[inputs_df.session == N_posledniy_sesii]
-    kub = kubik().drop(['index','cumsum'], axis=1)
-    kub_m=kub[kub.suboperations == 'mul_1_m'].drop('suboperations', axis=1)
-    kub_d=kub[kub.suboperations == 'mul_1_d'].drop('suboperations', axis=1)
-    
-    #
-    kub.time_mean = kub.time_mean.astype(int)
-    print (kub)
-    sns.heatmap(kub_m)
+    kub = kubik().drop(['index','cumsum', 'suboperations'], axis=1)
+    #kub_m=kub[kub.suboperations == 'mul_1_m'].drop(, axis=1)
+    #kub_d=kub[kub.suboperations == 'mul_1_d'].drop('suboperations', axis=1)
+    df = preparate_to_heatmap(df=kub, var1='var_1', var2='var_2', value='time_mean')
+    print('df=')
+    print(df)
+    ax = sns.heatmap(df, annot=True, fmt ='.1f', cmap="coolwarm", vmin = df.min().min(), vmax = time_limit)
+    ax.set_title('Среднее время на решение примера (сек)')
+    ax.set_xlabel('2 множитель', fontsize=10)
+    ax.set_ylabel('1 множитель', fontsize=10)
     plt.show()
     #print('таблица ответов')
     #print (posledniya_sesiya)
