@@ -1,6 +1,6 @@
 # Программа-тренажер для помощи в запоминании таблицы умножения
 
-Основная ссылка: [https://github.com/Gatche-clyb/el](https://github.com/Gatche-clyb/el)
+Основная ссылка: [https://github.com/Gatche-clyb/el](https://github.com/Gatche-clyb/el)  
 Короткая ссылка (будет перенаправление на основную ссылку): [https://gifara.ru/7/0](https://gifara.ru/7/0)
 
 ## Установка
