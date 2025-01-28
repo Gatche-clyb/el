@@ -7,9 +7,11 @@ import pandas as pd # мы импортируем библиотеку для о
 import os # модуль для проверки существования файлов
 import matplotlib.pyplot as plt  # базовый модуль отрисовки графики
 import seaborn as sns  # модуль графического представления данных
+from datetime import datetime
+from collections import namedtuple
 
 time_limit = 5  # количество секунд на ответ
-number_of_tasks = 15  # количество примеров
+number_of_tasks = 6  # количество примеров
 mul_limit = [1, 4]  # пределы множителей
 div_limit = [1, 4]  # пределы делимого и частного в этом диапазоне
 error_penalty = 150  # штраф за ошибку
@@ -18,6 +20,8 @@ not_using_penalty = 90  # если пример до этого не встре�
 
 pd.options.display.max_columns = None  # выводить все столбцы таблицы
 init() # включаем возможность цветного вывода на экран
+print('https://gifara.ru/7/0')
+
 #Ввод с ограничением времени
 
 # загрузка предыдущих ответов
@@ -27,7 +31,7 @@ DEFAULT_USER_ID = 346547893 # записываем первое попавшее
 
 if not os.path.exists(CSV_FILE):# если нет файла с ответами то выполни блок ниже
     inputs_df_src = pd.DataFrame(data={'operation':'mul_1','suboperation':'mul_1_m', 'session': 1, 'user_id':DEFAULT_USER_ID,
-        'var1': 1,'var2':1,'ansver_time': 5  ,'ansver_time_limit':15,'input':1,'status':'ok',
+        'var1': 1,'var2':1,'ansver_time': 0.5  ,'ansver_time_limit':15,'input':1,'status':'ok',
         'date_time':'2025-01-02 11:17:10.9'}, index=[0])#создаём структуру с ответами
     print('сгенерирован файл с ответами')#печатать сгенерирован файл с ответами 
 else:# в противном случае файл существует перейди на другой блок
@@ -153,9 +157,10 @@ def generaceya_primerov(kolichestvo_primerov, *, user_id=DEFAULT_USER_ID, ansver
             a = primer['var_1']
             b = primer['var_2']
             proizvedenie = a*b
-            chastnoe = b
+            delitel = b
+            chastnoe = a
              # Строчка ниже означает, печатать {a}/{b}=
-            print(f"{proizvedenie}:{a}=", end="")
+            print(f"{proizvedenie}:{delitel}=", end="")
             # Строчка ниже означает,запись в переменную с ввода с клавиотуры
             ##c = input_with_timeout(5, print_timeout=True, default = None).get().input
             ##c=input()
@@ -163,17 +168,17 @@ def generaceya_primerov(kolichestvo_primerov, *, user_id=DEFAULT_USER_ID, ansver
             # Оставить целое число
             c = int(vvod.input)
             # 2 Строчки ниже означает, если suma равна переменной с:напечатать ("Правильно")
-            if chastnoe==c:
+            if chastnoe == c:
                 if  vvod.time_exceeded>=vvod.time_sec:
                     print (Fore.GREEN + "Правильно" + Fore.WHITE)
                     da=da+1
                     status = 'ok'
             # 2 Строчки ниже означает, если suma неравна переменной с:напечатать ("Неправильно")
                 else:
-                    print (Fore.BLUE + "Неуспел. Будет ", proizvedenie, Fore.WHITE)
+                    print (Fore.BLUE + "Неуспел. Будет ", chastnoe, Fore.WHITE)
                     Timaut=Timaut+1
             else:
-                print (Fore.RED + "Неправильно. Будет ", proizvedenie, Fore.WHITE)
+                print (Fore.RED + "Неправильно. Будет ", chastnoe, Fore.WHITE)
                 net=net+1
                 
                 status='error'
@@ -182,8 +187,7 @@ def generaceya_primerov(kolichestvo_primerov, *, user_id=DEFAULT_USER_ID, ansver
             'ansver_time': vvod.time_sec  ,'ansver_time_limit':ansver_time_limit, 'input':c, 'status':status,
         'date_time':date_time_current}
     #print(inputs_df)
-    print(f"Правильных {da} Неправильных {net} Тай-маутав {Timaut}")#печатать скоко правильных а скоко неправильных
-
+    print(f" {Fore.WHITE} {da+net+Timaut} {Fore.GREEN} {da} {Fore.RED} {net} {Fore.BLUE} {Timaut}")#печатать скоко правильных а скоко неправильных
 
 def preparate_to_heatmap(*, df, var1, var2, value, agg='mean'):
     #print(f"\tpreparate_to_heatmap\t{var1=}\t{var2=}\t{value=}\tdf=\n{df}")
@@ -204,6 +208,7 @@ def vozvrat_v_tablicu():
     #N_posledniy_sesii = inputs_df.session.max()
     #posledniya_sesiya = inputs_df[inputs_df.session == N_posledniy_sesii]
     kub = kubik().drop(['index','cumsum', 'suboperations'], axis=1)
+    #print(f"kub=\n{kub}")
     #kub_m=kub[kub.suboperations == 'mul_1_m'].drop(, axis=1)
     #kub_d=kub[kub.suboperations == 'mul_1_d'].drop('suboperations', axis=1)
     df = preparate_to_heatmap(df=kub, var1='var_1', var2='var_2', value='time_mean')
@@ -221,6 +226,6 @@ def vozvrat_v_tablicu():
 #print('minikubikl')
 #kub=kubik()
 #print('generaceya_primerov')
-#generaceya_primerov(15, ansver_time_limit=7)
-#save_inputi()
+generaceya_primerov(number_of_tasks, ansver_time_limit=7)
+save_inputi()
 vozvrat_v_tablicu()
