@@ -1,9 +1,9 @@
 #!el/bin/python3
 # Настройки программы
-time_limit = 5  # количество секунд на ответ
-number_of_tasks = 6  # количество примеров
-mul_limit = [1, 4]  # пределы множителей
-div_limit = [1, 4]  # пределы делимого и частного в этом диапазоне
+time_limit = 8  # количество секунд на ответ
+number_of_tasks = 10  # количество примеров
+mul_limit = [1, 10]  # пределы множителей
+div_limit = [1, 10]  # пределы делимого и частного в этом диапазоне
 error_penalty = 150  # штраф за ошибку
 timeout_penalty = 90  # штраф за таймаут
 not_using_penalty = 90  # если пример до этого не встречался, то такое количество секунд
@@ -100,9 +100,14 @@ def input_keyboard(max_time=15):#создаём функцию
     res_input=namedtuple('res_input', ['input', 'time_exceeded', 'time_sec'])#делаем структуру с тремя переменными
     start = datetime.now().timestamp()#смотрим время перед началом ввода
     vvod=input()
+    try:
+        vvod = int(vvod)
+    except:
+        print('это не число. Заменяем на 0')
+        vvod = 0
     finish = datetime.now().timestamp()#посмотрели время после конца ввода
     vremya=finish-start#сщитаем время ввода
-    result = res_input(int(vvod), max_time, vremya)
+    result = res_input(vvod, max_time, vremya)
     return result#вернуться к результату
 
 def generaceya_primerov(kolichestvo_primerov, *, user_id=DEFAULT_USER_ID, ansver_time_limit=15):#создаём функцию
@@ -214,8 +219,8 @@ def vozvrat_v_tablicu():
     #kub_m=kub[kub.suboperations == 'mul_1_m'].drop(, axis=1)
     #kub_d=kub[kub.suboperations == 'mul_1_d'].drop('suboperations', axis=1)
     df = preparate_to_heatmap(df=kub, var1='var_1', var2='var_2', value='time_mean')
-    print('df=')
-    print(df)
+    #print('df=')
+    #print(df)
     ax = sns.heatmap(df, annot=True, fmt ='.1f', cmap="coolwarm", vmin = df.min().min(), vmax = time_limit)
     ax.set_title('Среднее время на решение примера (сек)')
     ax.set_xlabel('2 множитель', fontsize=10)
