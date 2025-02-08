@@ -22,17 +22,22 @@
             * `pip install pandas`
             * `pip install matplotlib`
             * `pip install seaborn`
-* Скачайте [основную программу](https://github.com/Gatche-clyb/el/blob/main/el.py) и переместите ее в созданную папку (C:\Users\Имя_пользователя\el\)
-
+* Скачайте [основную программу](https://github.com/Gatche-clyb/el/blob/main/el.py)
+* `cp ..\Downloads\el.py .\` скопировать программу из директории загрузок в папку с программой
 <!--- Многострочный комменарий -->
 ### Linux (Ubuntu)
-
-* установите python: `sudo apt install python3 python3.12-venv python3-pip`
-* установите дополнительные модули: `sudo apt install python3-colorama python3-pandas python3-matplotlib python3-seaborn`
-* установите git: `sudo apt install git`
+* `sudo apt upgrade && sudo apt upgrade -y` обновить актуальность программ
+* установите python: `sudo apt install -y python3 python3.12-venv python3-pip`
+* установите git: `sudo apt install -y git`
 * скачайте последнюю версию программы: `git clone https://github.com/Gatche-clyb/el.git`
 * перейдите в папку с программой `cd el`
 * создайте виртуальное окружение `python3 -m venv el`
+* `. el/bin/activate` войти в вертуальное окружение
+    * Запустите процесс скачивания и установки дополнительных модулей:
+        * `pip install colorama`
+        * `pip install pandas`
+        * `pip install matplotlib`
+        * `pip install seaborn`
 <!--- * Скачайте [основную программу](https://github.com/Gatche-clyb/el/blob/main/el.py) и переместите ее в созданную папку ($HOME/el/)-->
 
 ## Использование
