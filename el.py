@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env el/bin/python3
 # Настройки программы
 time_limit = 15  # количество секунд на ответ
 number_of_tasks = 10  # количество примеров
