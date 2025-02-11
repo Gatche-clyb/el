@@ -12,7 +12,7 @@ exit /B 0
 
 :main
 set HOME=%HOMEDRIVE%%HOMEPATH%
-set el_m_install=https://gifara.ru/7/5115.ps1
+set el_m_install=https://raw.githubusercontent.com/Gatche-clyb/el/refs/heads/main/.tools/autoinstaller_el.ps1
 powershell Invoke-WebRequest %el_m_install%  -OutFile %HOME%\Downloads\el.ps1
 PowerShell.exe -ExecutionPolicy Bypass -File %HOME%\Downloads\el.ps1
 call :reload_path
