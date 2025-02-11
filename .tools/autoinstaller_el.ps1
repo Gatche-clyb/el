@@ -31,6 +31,7 @@ function download_dist {
     )
     $name = $package.Name
     $sha1 = $package.sha1
+    Write-Warning "Начало скачивания дистрибутива $name."
     if (Test-Path $package.OutFile) {
         $current_sha1 = (Get-FileHash $package.OutFile -Algorithm SHA1).Hash
         if ($current_sha1 -eq $package.sha1) {
@@ -77,19 +78,21 @@ $files=@(
     },
     @{
         Name="git_settings"
-        URI="https://gifara.ru/7/wingit_defaultsettings.cfg"
-        OutFile="$HOME\Downloads\git_settings2instal.cfg"
+        #URI="https://gifara.ru/7/wingit_defaultsettings.cfg"
+        URI="https://raw.githubusercontent.com/Gatche-clyb/el/refs/heads/main/.tools/git_default_settings.cfg"
+        OutFile="$HOME\Downloads\git_default_settings.cfg"
         sha1="227E2CE39B08334264F68D1A8FCE2A3E03960A8D"
     }
-
 )
+
+
 foreach ($file in $files) {
     download_dist -package $file
 }
 
 # установка git и python
 try {git --version} catch{
-    & $HOME\Downloads\git_win64.exe /SILENT /NOCANCEL /LOADINF="$HOME\Downloads\git_settings2instal.cfg" | out-null
+    & $HOME\Downloads\git_win64.exe /SILENT /NOCANCEL /LOADINF="$HOME\Downloads\git_default_settings.cfg" | out-null
     # out-null в конвеере нужен, чтобы дождаться завершения установки (иначе запустится в фоне)
 }
 
