@@ -6,7 +6,7 @@ sudo apt install -y git
 ssh -o StrictHostKeyChecking=no git@github.com
 git clone https://github.com/Gatche-clyb/el.git $HOME/el
 cd el
-python -m venv el
+python3 -m venv el
 . el/bin/activate
 pip install colorama
 pip install pandas
